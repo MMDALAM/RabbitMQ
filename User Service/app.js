@@ -20,7 +20,7 @@ app.post('/users', async (req, res) => {
     await user.save();
 
     // ارسال پیام به RabbitMQ
-    sendToQueue({ userId: user._id, email: user.email, action: 'user_created' });
+    sendToQueue({ userId: user._id,  name: user.name, email: user.email, action: 'user_created' });
 
     res.status(201).json(user);
   } catch (error) {
