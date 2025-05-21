@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/User');
-const { connectRabbitMQ, sendToQueue } = require('./rabbitmq');
+const { connectRabbitMQ, sendToQueueNotification, sendToQueueCreateSuccess } = require('./rabbitmq');
 
 const app = express();
 app.use(express.json());
@@ -11,6 +11,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(console.error);
 
+//RabbitMQ اتصال به 
 connectRabbitMQ();
 
 app.post('/users', async (req, res) => {
@@ -20,11 +21,13 @@ app.post('/users', async (req, res) => {
     await user.save();
 
     // ارسال پیام به RabbitMQ
-    sendToQueue({ userId: user._id,  name: user.name, email: user.email, action: 'user_created' });
+    sendToQueueNotification({ userId: user._id,  name: user.name, email: user.email, action: 'userCreate' });
 
-    res.status(201).json(user);
+    sendToQueueCreateSuccess({name: user.name });
+
+    return res.status(201).json(user);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+     return res.status(400).json({ error: error.message });
   }
 });
 

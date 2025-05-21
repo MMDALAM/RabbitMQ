@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { connectRabbitMQ, consumeQueue } = require('./rabbitmq');
-const Name = require('./models/Name');
+const Name = require('./models/NameUsers');
 
 const app = express();
 app.use(express.json());
@@ -16,20 +16,24 @@ async function start() {
 
   consumeQueue(async (message) => {
     try {
-      console.log('Received message in name-storage-service:', message);
+      // console.log('Received message in name-storage-service:', message);
 
-      // استخراج نام کاربر از پیام
-      const userName = message.name || message.email; // فرض کنیم اگر نام نبود ایمیل ذخیره شود
+      console.log(message);
 
-      if (!userName) {
-        console.warn('No name or email found in message');
-        return;
-      }
 
-      // ذخیره در MongoDB
+      
+      const userName = message.name || message.email; // دریافت پیام مقداردهی نام کاربر 
+
+      if (!userName) 
+        return console.warn('No name or email found in message');
+
+      
+
+      // ذخیره نام کاربر در پایگاه داده مجزا
       const nameRecord = new Name({ name: userName });
       await nameRecord.save();
-      console.log('Name saved:', userName);
+      
+      console.log('Name User:', userName);
     } catch (error) {
       console.error('Error saving name:', error);
     }

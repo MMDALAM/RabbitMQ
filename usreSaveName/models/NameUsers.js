@@ -4,4 +4,4 @@ const nameSchema = new mongoose.Schema({
   name: { type: String, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Name', nameSchema);
+module.exports = mongoose.model('NameUsers', nameSchema);

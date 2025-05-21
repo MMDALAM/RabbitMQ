@@ -8,7 +8,7 @@ async function connectRabbitMQ() {
     channel = await connection.createChannel();
 
     // صفی که پیام‌ها را گوش می‌دهیم، باید همان 'user_notifications' باشد
-    await channel.assertQueue('user_notifications');
+    await channel.assertQueue('userSaveName');
 
     console.log('Connected to RabbitMQ');
   } catch (error) {
@@ -21,7 +21,7 @@ function consumeQueue(onMessage) {
     console.error('RabbitMQ channel is not initialized');
     return;
   }
-  channel.consume('user_notifications', (msg) => {
+  channel.consume('userSaveName', (msg) => {
     if (msg !== null) {
       const content = JSON.parse(msg.content.toString());
       onMessage(content);
