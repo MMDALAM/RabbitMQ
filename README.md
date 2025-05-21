@@ -1,0 +1,2 @@
+# RabbitMQ
+project microservice RabbitMQ
